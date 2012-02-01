@@ -1,6 +1,6 @@
 # !/bin/sh
 # apt-fast v1.4 by Matt Parnell http://www.mattparnell.com, GNU GPLv3
-# Use this just like apt-get for faster package downloading.
+# Use this just like aptitude for faster package downloading.
 
 ###################################################################
 # CONFIGURATION OPTIONS                                           #
@@ -22,7 +22,7 @@ _MAXNUM=5
 #_DOWNLOADER='aria2c -s 20 -j ${_MAXNUM} --http-proxy=http://username:password@proxy_ip:proxy_port -i apt-fast.list'
 
 # axel:
-#_DOWNLOADER='cat /tmp/apt-fast.list | xargs -l1 axel -n ${_MAXNUM} -a' # axel
+_DOWNLOADER='cat /tmp/apt-fast.list | xargs -l1 axel -n ${_MAXNUM} -a' # axel
 
 ###################################################################
 # DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING! #
@@ -54,22 +54,22 @@ trap " [ -f ${LCK_FILE} ] && _unlock" 0 1 2 3 13 15
 if echo "$@" | grep -q "upgrade\|install\|dist-upgrade"; then
   echo "Working...";
 
-  # Go into the directory apt-get normally puts downloaded packages
+  # Go into the directory aptitude normally puts downloaded packages
   cd /var/cache/apt/archives/;
 
-  # Have apt-get print the information, including the URI's to the packages
+  # Have aptitude print the information, including the URI's to the packages
   # Strip out the URI's, and download the packages with Axel for speediness
   # I found this regex elsewhere, showing how to manually strip package URI's you may need...thanks to whoever wrote it
-  apt-get -y --print-uris $@ | egrep -o -e "(ht|f)tp://[^\']+" > /tmp/apt-fast.list
+  aptitude -y --print-uris $@ | egrep -o -e "(ht|f)tp://[^\']+" > /tmp/apt-fast.list
 	eval ${_DOWNLOADER}
-  
-	# Install our downloaded packages
-  apt-get $@;
 
-  echo -e "\nDone! Verify that all packages were installed successfully. If errors are found, run apt-get clean as root and try again using apt-get directly.\n";
+	# Install our downloaded packages
+  aptitude $@;
+
+  echo -e "\nDone! Verify that all packages were installed successfully. If errors are found, run aptitude clean as root and try again using aptitude directly.\n";
 
 else
-   apt-get $@;
+   aptitude $@;
 fi
 
 # Remove our lock
