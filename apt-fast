@@ -61,7 +61,9 @@ if echo "$@" | grep -q "upgrade\|install\|dist-upgrade"; then
   # Strip out the URI's, and download the packages with Axel for speediness
   # I found this regex elsewhere, showing how to manually strip package URI's you may need...thanks to whoever wrote it
   apt-get -y --print-uris $@ | egrep -o -e "(ht|f)tp://[^\']+" > /tmp/apt-fast.list
+  if [ -e "/tmp/apt-fast.list" ] ; then
 	eval ${_DOWNLOADER}
+  fi
 
 	# Install our downloaded packages
   aptitude $@;
